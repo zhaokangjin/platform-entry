@@ -1,0 +1,11 @@
+*.project
+*.classpath
+*.setting
+# Compiled class file
+*.class
+*org.*.prefs
+*org.eclipse.wst.common.project.facet.core.xml
+
+# Log file
+*.log
+/target/
