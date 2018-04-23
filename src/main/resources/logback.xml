@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+	<!-- 应用名称 -->
+	<contextName>PLATFORM_LOGGER</contextName>
+	<timestamp key="bySecond" datePattern="yyyy-MM-dd HH:mm:ss" />
+	<property name="PLATFORM" value="PlatformLogContexts" />
+	<property name="LOG_HOME" value="logs/" />
+	<property name="MODULE" value="configure/" />
+	<property name="FILE_SIZE" value="10MB" />
+	<!-- 日志输出格式 -->
+	<property name="ENCODER_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} -%msg%n" />
+	<!-- 控制台日志：输出全部日志到控制台 -->
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" immediateFlush="true">
+			<Pattern>${ENCODER_PATTERN}</Pattern>
+		</encoder>
+	</appender>
+	<!-- 文件日志：输出全部日志到文件 -->
+	<appender name="ALL_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_HOME}/${MODULE}/info_log._%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<maxHistory>7</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${FILE_SIZE}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" immediateFlush="true">
+			<pattern>${ENCODER_PATTERN}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<append>true</append>
+	</appender>
+	<!-- 错误日志：用于将错误日志输出到独立文件 -->
+	<appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_HOME}/${MODULE}/erro_log._%d{yyyy-MM-dd}.%i.log </FileNamePattern>
+			<maxHistory>7</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${FILE_SIZE}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" immediateFlush="true">
+			<pattern>${ENCODER_PATTERN}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<append>true</append>
+	</appender>
+	<!-- 使用异步来记录其他信息 -->
+	<!-- <appender name="FILE_ASYNC_OTHER" class="ch.qos.logback.classic.AsyncAppender"> <discardingThreshold>0</discardingThreshold> <queueSize>256</queueSize> <includeCallerData>true</includeCallerData> <appender-ref ref="ERROR_LOG" /> </appender> <appender name="FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender"> <discardingThreshold>0</discardingThreshold> <queueSize>256</queueSize> <includeCallerData>true</includeCallerData> <appender-ref ref="ALL_LOG" /> </appender> -->
+	<root>
+		<level value="DEBUG" />
+	</root>
+	<logger name="com.platform" addtivity="false">
+		<appender-ref ref="CONSOLE" level="INFO" />
+		<appender-ref ref="ALL_LOG" level="INFO" />
+		<appender-ref ref="ERROR_LOG" level="ERROR" />
+	</logger>
+</configuration>
